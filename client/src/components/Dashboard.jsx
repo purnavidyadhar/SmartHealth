@@ -596,7 +596,7 @@ const Dashboard = () => {
               </div>
               <div style={{ display: 'grid', gap: '1rem' }}>
                 {/* Report Issue - All Authenticated Users */}
-                {isAuthenticated() && (['community', 'health_worker', 'admin', 'national_admin'].includes(user?.role)) && (
+                {isAuthenticated() && (['health_worker', 'admin', 'national_admin'].includes(user?.role)) && (
                   <Link to="/report">
                     <motion.button
                       className="btn btn-primary"

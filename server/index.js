@@ -201,7 +201,7 @@ app.get('/api/reports', authenticate, authorize(ROLES.HEALTH_WORKER, ROLES.ADMIN
 });
 
 // Create new report (Protected: Community, Health Workers & Admins)
-app.post('/api/reports', authenticate, authorize(ROLES.COMMUNITY, ROLES.HEALTH_WORKER, ROLES.ADMIN, ROLES.NATIONAL_ADMIN), async (req, res) => {
+app.post('/api/reports', authenticate, authorize(ROLES.HEALTH_WORKER, ROLES.ADMIN, ROLES.NATIONAL_ADMIN), async (req, res) => {
     try {
         console.log('POST /api/reports - User:', req.user);
         console.log('Request body:', req.body);

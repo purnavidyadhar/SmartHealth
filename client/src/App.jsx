@@ -30,7 +30,7 @@ function App() {
                 <Route
                   path="/report"
                   element={
-                    <ProtectedRoute allowedRoles={['community', 'health_worker', 'admin', 'national_admin']}>
+                    <ProtectedRoute allowedRoles={['health_worker', 'admin', 'national_admin']}>
                       <ReportForm />
                     </ProtectedRoute>
                   }
