@@ -1,7 +1,9 @@
 import React from 'react';
+import { useAuth } from '../context/AuthContext';
 import { Activity, Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
+    const { user, isAuthenticated } = useAuth();
     return (
         <footer className="footer">
             <div className="container">
@@ -22,7 +24,9 @@ const Footer = () => {
                         <h4>Quick Links</h4>
                         <ul>
                             <li><a href="/">Dashboard</a></li>
-                            <li><a href="/report">Report Case</a></li>
+                            {isAuthenticated() && ['health_worker', 'admin', 'national_admin'].includes(user?.role) && (
+                                <li><a href="/report">Report Case</a></li>
+                            )}
                             <li><a href="/alerts">Active Alerts</a></li>
                             <li><a href="/resources">Resources</a></li>
                         </ul>
