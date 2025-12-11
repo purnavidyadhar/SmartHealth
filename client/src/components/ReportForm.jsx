@@ -1,298 +1,303 @@
 import React, { useState } from 'react';
-import { Send, CheckCircle, AlertCircle, Map } from 'lucide-react';
+import {
+    Send, CheckCircle2, MapPin,
+    Thermometer, Droplets, Activity,
+    ShieldAlert, AlertTriangle, Info,
+    ChevronDown, LocateFixed, ArrowRight
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import reportImage from '../assets/report.jpg';
 
 const ReportForm = () => {
-    const { user, token } = useAuth();
-    const [formData, setFormData] = useState({
+    const { token } = useAuth();
+    const [submitting, setSubmitting] = useState(false);
+    const [status, setStatus] = useState('idle');
+    const [activeSection, setActiveSection] = useState(0);
+
+    const [form, setForm] = useState({
         state: 'Assam',
         location: '',
-        symptoms: '',
-        waterSource: '',
+        symptoms: [],
         severity: 'Low',
+        waterSource: '',
         notes: ''
     });
-    const [status, setStatus] = useState('idle');
 
-    const neStates = [
-        "Arunachal Pradesh",
-        "Assam",
-        "Manipur",
-        "Meghalaya",
-        "Mizoram",
-        "Nagaland",
-        "Sikkim",
-        "Tripura"
+    const NORTH_EAST_STATES = [
+        "Arunachal Pradesh", "Assam", "Manipur", "Meghalaya",
+        "Mizoram", "Nagaland", "Sikkim", "Tripura"
     ];
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const toggleSymptom = (id) => {
+        setForm(prev => ({
+            ...prev,
+            symptoms: prev.symptoms.includes(id)
+                ? prev.symptoms.filter(s => s !== id)
+                : [...prev.symptoms, id]
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setStatus('submitting');
-
+        setSubmitting(true);
         try {
-            const response = await fetch('http://localhost:5000/api/reports', {
+            const res = await fetch('http://localhost:5000/api/reports', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    symptoms: formData.symptoms.split(',').map(s => s.trim())
-                })
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(form)
             });
-
-            if (response.ok) {
+            if (res.ok) {
                 setStatus('success');
-                setFormData({
-                    state: 'Assam',
-                    location: '',
-                    symptoms: '',
-                    waterSource: '',
-                    severity: 'Low',
-                    notes: ''
-                });
-                setTimeout(() => setStatus('idle'), 3000);
+                setTimeout(() => {
+                    setStatus('idle');
+                    setForm({ state: 'Assam', location: '', symptoms: [], severity: 'Low', waterSource: '', notes: '' });
+                }, 4000);
             } else {
                 setStatus('error');
             }
         } catch (err) {
-            console.error(err);
             setStatus('error');
+        } finally {
+            setSubmitting(false);
         }
     };
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1
-            }
-        }
-    };
+    // UI Components
+    const GlassCard = ({ children, className = "" }) => (
+        <div className={`glass-panel ${className}`} style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '24px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+        }}>
+            {children}
+        </div>
+    );
 
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: { y: 0, opacity: 1 }
-    };
-
-    const inputFocus = {
-        scale: 1.01,
-        borderColor: "var(--primary)",
-        boxShadow: "0 0 0 4px rgba(16, 185, 129, 0.1)"
-    };
+    const StepIndicator = ({ active }) => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingRight: '2rem', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
+            {[
+                { icon: MapPin, label: "Location" },
+                { icon: Activity, label: "Symptoms" },
+                { icon: ShieldAlert, label: "Analysis" }
+            ].map((step, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '1rem', opacity: active >= idx ? 1 : 0.4 }}>
+                    <div style={{
+                        width: '40px', height: '40px', borderRadius: '12px',
+                        background: active >= idx ? '#10b981' : 'transparent',
+                        border: active >= idx ? 'none' : '1px solid #94a3b8',
+                        color: active >= idx ? 'white' : '#94a3b8',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'all 0.3s'
+                    }}>
+                        <step.icon size={20} />
+                    </div>
+                    <span style={{ fontSize: '1rem', fontWeight: 600, color: 'white' }}>{step.label}</span>
+                </div>
+            ))}
+        </div>
+    );
 
     return (
-        <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={containerVariants}
-            className="container"
-        >
-            <motion.div variants={itemVariants} className="page-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                <h1 className="page-title">Submit Health Report</h1>
-                <p className="page-subtitle">Help us track and prevent water-borne diseases by reporting cases in your region.</p>
-            </motion.div>
+        <div style={{
+            minHeight: '100vh',
+            background: 'radial-gradient(circle at top right, #064e3b 0%, #0f172a 60%, #020617 100%)',
+            padding: '4rem 2rem',
+            display: 'flex', justifyContent: 'center', alignItems: 'center'
+        }}>
+            <div style={{ width: '100%', maxWidth: '1200px' }}>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '3rem', alignItems: 'start' }}>
-                <motion.div variants={itemVariants} className="glass-panel card">
-                    <AnimatePresence mode='wait'>
-                        {status === 'success' && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                style={{
-                                    padding: '1rem',
-                                    background: 'rgba(16, 185, 129, 0.1)',
-                                    border: '1px solid rgba(16, 185, 129, 0.2)',
-                                    color: '#34d399',
-                                    borderRadius: '0.75rem',
-                                    marginBottom: '1.5rem',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.75rem'
-                                }}
-                            >
-                                <CheckCircle size={20} />
-                                Report submitted successfully! Thank you for your contribution.
-                            </motion.div>
-                        )}
+                {/* Header */}
+                <div style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
+                    <div>
+                        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                            padding: '0.5rem 1rem', background: 'rgba(16, 185, 129, 0.2)',
+                            borderRadius: '20px', color: '#34d399', fontSize: '0.9rem', fontWeight: 600, marginBottom: '1rem'
+                        }}>
+                            <ShieldAlert size={16} /> Secure Health Uplink
+                        </motion.div>
+                        <h1 style={{ fontSize: '3rem', fontWeight: 800, color: 'white', margin: 0, letterSpacing: '-0.02em' }}>
+                            Submit Field Report
+                        </h1>
+                    </div>
+                </div>
 
-                        {status === 'error' && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                style={{
-                                    padding: '1rem',
-                                    background: 'rgba(239, 68, 68, 0.1)',
-                                    border: '1px solid rgba(239, 68, 68, 0.2)',
-                                    color: '#fca5a5',
-                                    borderRadius: '0.75rem',
-                                    marginBottom: '1.5rem',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.75rem'
-                                }}
-                            >
-                                <AlertCircle size={20} />
-                                Error submitting report. Please check your connection and try again.
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(250px, 1fr) 3fr', gap: '4rem' }}>
 
-                    <form onSubmit={handleSubmit}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                            <motion.div variants={itemVariants} className="form-group">
-                                <label className="form-label">State</label>
-                                <div style={{ position: 'relative' }}>
-                                    <motion.select
-                                        whileFocus={inputFocus}
-                                        name="state"
-                                        className="form-select"
-                                        value={formData.state}
-                                        onChange={handleChange}
-                                        required
-                                        style={{ paddingLeft: '2.5rem' }}
+                    {/* Left Sidebar (Desktop) */}
+                    <div className="hidden-mobile" style={{ paddingTop: '2rem' }}>
+                        <StepIndicator active={activeSection} />
+
+                        <div style={{ marginTop: '4rem', padding: '1.5rem', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <h4 style={{ color: '#34d399', fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <Info size={16} /> Protocols
+                            </h4>
+                            <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.6 }}>
+                                Accurate reporting is crucial for predictive modeling. Ensure location coordinates are verified before transmission.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Main Form Area */}
+                    <GlassCard className="form-container">
+                        <form onSubmit={handleSubmit} style={{ padding: '3rem' }}>
+
+                            {/* Success Overlay */}
+                            <AnimatePresence>
+                                {status === 'success' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.9 }}
+                                        style={{
+                                            position: 'absolute', inset: 0, background: 'rgba(6, 78, 59, 0.95)',
+                                            backdropFilter: 'blur(10px)', zIndex: 50, borderRadius: '24px',
+                                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+                                        }}
                                     >
-                                        {neStates.map(state => (
-                                            <option key={state} value={state} style={{ color: 'black' }}>{state}</option>
-                                        ))}
-                                    </motion.select>
-                                    <Map size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                                        <div style={{ padding: '1.5rem', background: '#34d399', borderRadius: '50%', marginBottom: '1.5rem' }}>
+                                            <CheckCircle2 size={48} color="#064e3b" />
+                                        </div>
+                                        <h2 style={{ fontSize: '2rem', color: 'white', fontWeight: 800 }}>Report Secured</h2>
+                                        <p style={{ color: '#a7f3d0' }}>ID: {Math.floor(Math.random() * 1000000)}</p>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            {/* Section 1: Location */}
+                            <div style={{ marginBottom: '3rem' }} onFocus={() => setActiveSection(0)}>
+                                <h3 style={{ fontSize: '1.25rem', color: 'white', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                    <span style={{ color: '#34d399' }}>01.</span> Location Vector
+                                </h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) 2fr', gap: '1.5rem' }}>
+                                    <div>
+                                        <label style={{ display: 'block', color: '#94a3b8', fontSize: '0.9rem', marginBottom: '0.5rem' }}>State Jurisdiction</label>
+                                        <div style={{ position: 'relative' }}>
+                                            <select
+                                                value={form.state} onChange={e => setForm({ ...form, state: e.target.value })}
+                                                style={{ width: '100%', padding: '1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', appearance: 'none' }}
+                                            >
+                                                {NORTH_EAST_STATES.map(s => <option key={s} value={s} style={{ background: '#0f172a' }}>{s}</option>)}
+                                            </select>
+                                            <ChevronDown style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.5, pointerEvents: 'none' }} color="white" size={18} />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', color: '#94a3b8', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Precise Sector / Village</label>
+                                        <div style={{ position: 'relative' }}>
+                                            <input
+                                                value={form.location} onChange={e => setForm({ ...form, location: e.target.value })}
+                                                placeholder="e.g. Sonapur, Kamrup District"
+                                                style={{ width: '100%', padding: '1rem 1rem 1rem 3rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none' }}
+                                            />
+                                            <LocateFixed style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} color="white" size={18} />
+                                        </div>
+                                    </div>
                                 </div>
-                            </motion.div>
+                            </div>
 
-                            <motion.div variants={itemVariants} className="form-group">
-                                <label className="form-label">Village / Town</label>
-                                <motion.input
-                                    whileFocus={inputFocus}
-                                    type="text"
-                                    name="location"
-                                    className="form-input"
-                                    value={formData.location}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder="e.g., Sonapur"
-                                />
-                            </motion.div>
-                        </div>
+                            {/* Section 2: Symptoms */}
+                            <div style={{ marginBottom: '3rem' }} onFocus={() => setActiveSection(1)}>
+                                <h3 style={{ fontSize: '1.25rem', color: 'white', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                    <span style={{ color: '#34d399' }}>02.</span> Observable Symptoms
+                                </h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1rem' }}>
+                                    {[
+                                        { id: 'Fever', icon: Thermometer },
+                                        { id: 'Diarrhea', icon: Droplets },
+                                        { id: 'Vomiting', icon: Activity },
+                                        { id: 'Skin Rash', icon: ShieldAlert },
+                                        { id: 'Fatigue', icon: Activity }
+                                    ].map(sym => {
+                                        const isActive = form.symptoms.includes(sym.id);
+                                        return (
+                                            <div
+                                                key={sym.id} onClick={() => toggleSymptom(sym.id)}
+                                                style={{
+                                                    padding: '1.25rem', borderRadius: '16px', cursor: 'pointer',
+                                                    background: isActive ? '#10b981' : 'rgba(255,255,255,0.03)',
+                                                    border: isActive ? '1px solid #10b981' : '1px solid rgba(255,255,255,0.1)',
+                                                    transition: 'all 0.2s', display: 'flex', flexDirection: 'column', gap: '0.75rem'
+                                                }}
+                                            >
+                                                <sym.icon size={24} color={isActive ? 'white' : '#94a3b8'} />
+                                                <span style={{ color: isActive ? 'white' : '#94a3b8', fontWeight: 600 }}>{sym.id}</span>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
 
-                        <motion.div variants={itemVariants} className="form-group">
-                            <label className="form-label">Symptoms</label>
-                            <motion.input
-                                whileFocus={inputFocus}
-                                type="text"
-                                name="symptoms"
-                                className="form-input"
-                                value={formData.symptoms}
-                                onChange={handleChange}
-                                required
-                                placeholder="e.g., Fever, Diarrhea, Vomiting"
-                            />
-                        </motion.div>
+                            {/* Section 3: Analysis */}
+                            <div style={{ marginBottom: '3rem' }} onFocus={() => setActiveSection(2)}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                                    <div>
+                                        <h3 style={{ fontSize: '1.25rem', color: 'white', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                            <span style={{ color: '#34d399' }}>03.</span> Suspected Source
+                                        </h3>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                                            {['River', 'Well', 'Pond', 'Tank', 'Other'].map(src => (
+                                                <button
+                                                    key={src} type="button"
+                                                    onClick={() => setForm({ ...form, waterSource: src })}
+                                                    style={{
+                                                        padding: '0.75rem 1.25rem', borderRadius: '50px', border: 'none',
+                                                        background: form.waterSource === src ? '#38bdf8' : 'rgba(255,255,255,0.1)',
+                                                        color: form.waterSource === src ? '#082f49' : '#cbd5e1',
+                                                        fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    {src}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 style={{ fontSize: '1.25rem', color: 'white', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                            <span style={{ color: '#ef4444' }}>04.</span> Severity
+                                        </h3>
+                                        <div style={{ background: 'rgba(0,0,0,0.2)', padding: '0.5rem', borderRadius: '16px', display: 'flex' }}>
+                                            {['Low', 'Medium', 'High'].map(lvl => (
+                                                <button
+                                                    key={lvl} type="button"
+                                                    onClick={() => setForm({ ...form, severity: lvl })}
+                                                    style={{
+                                                        flex: 1, padding: '0.75rem', borderRadius: '12px', border: 'none',
+                                                        background: form.severity === lvl ? (lvl === 'High' ? '#ef4444' : lvl === 'Medium' ? '#f59e0b' : '#10b981') : 'transparent',
+                                                        color: form.severity === lvl ? 'white' : '#64748b',
+                                                        fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s'
+                                                    }}
+                                                >
+                                                    {lvl}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                            <motion.div variants={itemVariants} className="form-group">
-                                <label className="form-label">Water Source</label>
-                                <motion.select
-                                    whileFocus={inputFocus}
-                                    name="waterSource"
-                                    className="form-select"
-                                    value={formData.waterSource}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="" style={{ color: 'black' }}>Select Source</option>
-                                    <option value="Community Well" style={{ color: 'black' }}>Community Well</option>
-                                    <option value="River" style={{ color: 'black' }}>River</option>
-                                    <option value="Pond" style={{ color: 'black' }}>Pond</option>
-                                    <option value="Hand Pump" style={{ color: 'black' }}>Hand Pump</option>
-                                    <option value="Tap Water" style={{ color: 'black' }}>Tap Water</option>
-                                    <option value="Other" style={{ color: 'black' }}>Other</option>
-                                </motion.select>
-                            </motion.div>
+                            <motion.button
+                                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                type="submit" disabled={submitting}
+                                style={{
+                                    width: '100%', padding: '1.25rem', borderRadius: '16px',
+                                    background: 'linear-gradient(to right, #10b981, #059669)',
+                                    border: 'none', color: 'white', fontSize: '1.1rem', fontWeight: 800,
+                                    cursor: submitting ? 'not-allowed' : 'pointer',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem',
+                                    boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)'
+                                }}
+                            >
+                                {submitting ? <Activity className="spin" /> : <>TRANSMIT DATA <ArrowRight /></>}
+                            </motion.button>
 
-                            <motion.div variants={itemVariants} className="form-group">
-                                <label className="form-label">Severity</label>
-                                <motion.select
-                                    whileFocus={inputFocus}
-                                    name="severity"
-                                    className="form-select"
-                                    value={formData.severity}
-                                    onChange={handleChange}
-                                >
-                                    <option value="Low" style={{ color: 'black' }}>Low (Mild)</option>
-                                    <option value="Medium" style={{ color: 'black' }}>Medium (Moderate)</option>
-                                    <option value="High" style={{ color: 'black' }}>High (Urgent)</option>
-                                </motion.select>
-                            </motion.div>
-                        </div>
-
-                        <motion.div variants={itemVariants} className="form-group">
-                            <label className="form-label">Additional Notes</label>
-                            <motion.textarea
-                                whileFocus={inputFocus}
-                                name="notes"
-                                className="form-textarea"
-                                rows="3"
-                                value={formData.notes}
-                                onChange={handleChange}
-                                placeholder="Any other relevant details..."
-                            ></motion.textarea>
-                        </motion.div>
-
-                        <motion.button
-                            variants={itemVariants}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            type="submit"
-                            className="btn btn-primary"
-                            style={{ width: '100%' }}
-                            disabled={status === 'submitting'}
-                        >
-                            {status === 'submitting' ? (
-                                <motion.div
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                    style={{ width: '20px', height: '20px', border: '2px solid white', borderTopColor: 'transparent', borderRadius: '50%' }}
-                                />
-                            ) : (
-                                <>
-                                    <Send size={18} />
-                                    Submit Report
-                                </>
-                            )}
-                        </motion.button>
-                    </form>
-                </motion.div>
-
-                <motion.div variants={itemVariants} style={{ position: 'sticky', top: '6rem' }}>
-                    <div style={{ borderRadius: '1rem', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', marginBottom: '1.5rem' }}>
-                        <img src={reportImage} alt="Community Health" style={{ width: '100%', display: 'block' }} />
-                    </div>
-                    <div className="glass-panel" style={{ padding: '2rem' }}>
-                        <h3 style={{ marginBottom: '1rem', color: 'var(--primary)' }}>Why Report?</h3>
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                            Timely reporting helps us identify potential outbreaks before they spread. Your data is crucial for:
-                        </p>
-                        <ul style={{ paddingLeft: '1.5rem', color: 'var(--text-main)' }}>
-                            <li style={{ marginBottom: '0.5rem' }}>Early detection of water contamination</li>
-                            <li style={{ marginBottom: '0.5rem' }}>Rapid response resource allocation</li>
-                            <li>Community awareness and safety</li>
-                        </ul>
-                    </div>
-                </motion.div>
+                        </form>
+                    </GlassCard>
+                </div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 

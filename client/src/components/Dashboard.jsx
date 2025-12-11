@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Legend, Cell, LineChart, Line } from 'recharts';
-import { Activity, AlertTriangle, MapPin, Clock, ArrowRight, Droplets, Mountain, TrendingUp, Users, FileText, Plus, X, FilePlus } from 'lucide-react';
+import { Activity, AlertTriangle, MapPin, Clock, ArrowRight, Droplets, Mountain, TrendingUp, Users, FileText, Plus, X, FilePlus, Download, Sparkles } from 'lucide-react';
 import { motion, animate, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import neHeroImage from '../assets/ne_hero.png';
@@ -241,6 +241,20 @@ const Dashboard = () => {
     }
   };
 
+  const handleExport = () => {
+    if (!stats) return;
+    const csvContent = "data:text/csv;charset=utf-8,"
+      + "Location,Total Cases,Registered Cases\n"
+      + Object.entries(stats.locations).map(([loc, data]) => `${loc},${data.totalCases || data},${data.registeredCases || 0}`).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "health_data_export.csv");
+    document.body.appendChild(link);
+    link.click();
+  };
+
 
   const MapToggle = () => {
     if (!showMap) {
@@ -433,6 +447,44 @@ const Dashboard = () => {
                 <div className="stat-value"><Counter from={0} to={Object.keys(stats.locations || {}).length} /></div>
                 <div className="stat-label">Monitored Villages</div>
               </div>
+            </motion.div>
+          </div>
+
+          {/* AI Insights & Actions Row */}
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
+            <motion.div variants={itemVariants} className="glass-panel card" style={{ padding: '2rem', position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(14, 165, 233, 0.05))' }}>
+              <div style={{ position: 'absolute', top: 0, right: 0, padding: '1rem' }}>
+                <Sparkles size={24} color="#f59e0b" style={{ opacity: 0.5 }} />
+              </div>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.5rem' }}>🧠</span> System Intelligence
+              </h3>
+              <div style={{ display: 'flex', gap: '2rem' }}>
+                <div>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Predicted Risk Level</p>
+                  <p style={{ fontSize: '1.5rem', fontWeight: 800, color: stats.highSeverity > 10 ? '#ef4444' : '#10b981' }}>
+                    {stats.highSeverity > 20 ? 'CRITICAL' : stats.highSeverity > 10 ? 'ELEVATED' : 'STABLE'}
+                  </p>
+                </div>
+                <div style={{ flex: 1, borderLeft: '1px solid var(--border-color)', paddingLeft: '2rem' }}>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Recommended Actions</p>
+                  <ul style={{ paddingLeft: '1rem', margin: 0, fontSize: '0.95rem', color: 'var(--text-main)', lineHeight: 1.6 }}>
+                    {stats.highSeverity > 10
+                      ? <li>Deploy rapid response teams to Sector 4.</li>
+                      : <li>Maintain routine surveillance protocols.</li>}
+                    <li>Verify water quality logs for current week.</li>
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="glass-panel card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+              <div style={{ marginBottom: '1rem', padding: '1rem', background: 'var(--bg-main)', borderRadius: '50%' }}>
+                <Download size={32} color="var(--primary)" />
+              </div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>Export Data</h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Download comprehensive report CSV.</p>
+              <button onClick={handleExport} className="btn" style={{ border: '1px solid var(--border-color)', width: '100%' }}>Download Now</button>
             </motion.div>
           </div>
 

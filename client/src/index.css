@@ -23,29 +23,41 @@
   --shadow-color: rgba(0, 0, 0, 0.4);
   --input-bg: rgba(0, 0, 0, 0.3);
   --nav-bg: rgba(2, 44, 34, 0.85);
-  --accent-blue: #0ea5e9;
   /* River Blue */
   --accent-earth: #d97706;
   /* Earthy Orange */
+
+  /* Pattern Colors */
+  --pattern-green: rgba(16, 185, 129, 0.1);
+  --pattern-blue: rgba(14, 165, 233, 0.1);
+  --pattern-orange: rgba(217, 119, 6, 0.05);
 }
 
-/* Light Theme (Daylight Valley) */
+/* Light Theme (Daylight Valley - Enhanced) */
 :root.light {
   --primary: #059669;
-  --primary-gradient: linear-gradient(135deg, #059669 0%, #34d399 100%);
-  --bg-main: #f0fdf4;
-  /* Pale Green */
-  --bg-card: rgba(255, 255, 255, 0.9);
-  --bg-glass: rgba(255, 255, 255, 0.6);
-  --text-main: #064e3b;
-  /* Dark Green Text */
-  --text-muted: #047857;
-  --border-color: rgba(5, 150, 105, 0.2);
-  --shadow-color: rgba(5, 150, 105, 0.1);
-  --input-bg: rgba(255, 255, 255, 0.8);
-  --nav-bg: rgba(255, 255, 255, 0.9);
-  --accent-blue: #0284c7;
-  --accent-earth: #b45309;
+  --primary-gradient: linear-gradient(135deg, #34d399 0%, #059669 100%);
+  --bg-main: #ecfdf5;
+  /* Mint Cream */
+  --bg-card: rgba(255, 255, 255, 0.85);
+  /* More translucent for better glass effect */
+  --bg-glass: rgba(255, 255, 255, 0.5);
+  --text-main: #1f2937;
+  /* Gray 800 - softer than pure black */
+  --text-muted: #4b5563;
+  /* Gray 600 */
+  --border-color: rgba(0, 0, 0, 0.08);
+  /* Very light gray border for boxes */
+  --shadow-color: rgba(5, 150, 105, 0.15);
+  /* Green-tinted shadow */
+  --input-bg: rgba(255, 255, 255, 0.7);
+  --accent-blue: #0ea5e9;
+  --accent-earth: #d97706;
+
+  /* Pattern Colors - More vibrant for light mode */
+  --pattern-green: rgba(52, 211, 153, 0.25);
+  --pattern-blue: rgba(56, 189, 248, 0.25);
+  --pattern-orange: rgba(251, 146, 60, 0.2);
 }
 
 * {
@@ -73,9 +85,9 @@ body::before {
   height: 100%;
   z-index: -1;
   background-image:
-    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(217, 119, 6, 0.05) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, var(--pattern-green) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, var(--pattern-blue) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, var(--pattern-orange) 0px, transparent 50%);
   pointer-events: none;
 }
 
@@ -102,9 +114,18 @@ button {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
+  /* Uses the theme variable we just lightened */
   border-radius: var(--radius);
   box-shadow: 0 8px 32px 0 var(--shadow-color);
   transition: var(--transition);
+}
+
+/* Explicitly stronger border for light mode glass panels */
+:root.light .glass-panel {
+  border: 1.5px solid #34d399;
+  /* Emerald 400 - Matches brand green */
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+  /* Greenish shadow */
 }
 
 .glass-nav {
