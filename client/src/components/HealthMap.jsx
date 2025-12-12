@@ -22,7 +22,43 @@ L.Marker.prototype.options.icon = DefaultIcon;
 const coordinateCache = {};
 
 // State centers for better fallback positioning
-const STATE_CENTERS = {
+// Predefined coordinates for major NE cities and states to avoid API failures
+const PREDEFINED_COORDINATES = {
+    // Assam
+    'Guwahati': [26.1158, 91.7086],
+    'Dispur': [26.1408, 91.7907],
+    'Silchar': [24.8173, 92.7791],
+    'Dibrugarh': [27.4728, 94.9120],
+    'Jorhat': [26.7509, 94.2037],
+    'Tezpur': [26.6528, 92.7926],
+    'Nagaon': [26.3452, 92.6835],
+    'Tinsukia': [27.4922, 95.3567],
+    'Bongaigaon': [26.5028, 90.5516],
+    // Meghalaya
+    'Shillong': [25.5788, 91.8933],
+    'Tura': [25.5133, 90.2032],
+    'Cherrapunji': [25.2713, 91.7333],
+    // Manipur
+    'Imphal': [24.8170, 93.9368],
+    'Churachandpur': [24.3333, 93.6833],
+    // Mizoram
+    'Aizawl': [23.7271, 92.7176],
+    'Lunglei': [22.8833, 92.7333],
+    // Nagaland
+    'Kohima': [25.6701, 94.1077],
+    'Dimapur': [25.9068, 93.7272],
+    // Tripura
+    'Agartala': [23.8315, 91.2868],
+    'Udaipur': [23.5333, 91.4833],
+    // Arunachal Pradesh
+    'Itanagar': [27.0844, 93.6053],
+    'Tawang': [27.5861, 91.8594],
+    'Pasighat': [28.0667, 95.3333],
+    // Sikkim
+    'Gangtok': [27.3314, 88.6138],
+    'Namchi': [27.1667, 88.3500],
+
+    // State Centers (Fallback)
     'Assam': [26.2006, 92.9376],
     'Meghalaya': [25.4670, 91.3662],
     'Arunachal Pradesh': [28.2180, 94.7278],
@@ -33,9 +69,19 @@ const STATE_CENTERS = {
     'Sikkim': [27.5330, 88.5122]
 };
 
-// Geocode a location name to coordinates using Nominatim API
+// Geocode a location name to coordinates using Nominatim API or Predefined Data
 const geocodeLocation = async (locationName, stateName = null) => {
-    // Check cache first
+    // Check predefined list first (Case insensitive matching)
+    const normalizedLoc = Object.keys(PREDEFINED_COORDINATES).find(key =>
+        key.toLowerCase() === locationName.toLowerCase()
+    );
+
+    if (normalizedLoc) {
+        console.log(`Using predefined coordinates for ${locationName}`);
+        return PREDEFINED_COORDINATES[normalizedLoc];
+    }
+
+    // Check cache
     const cacheKey = stateName ? `${locationName}, ${stateName}` : locationName;
     if (coordinateCache[cacheKey]) {
         return coordinateCache[cacheKey];
@@ -44,7 +90,7 @@ const geocodeLocation = async (locationName, stateName = null) => {
     try {
         // Build search query with state if available
         let searchQuery;
-        if (stateName && STATE_CENTERS[stateName]) {
+        if (stateName && PREDEFINED_COORDINATES[stateName]) {
             searchQuery = encodeURIComponent(`${locationName}, ${stateName}, India`);
         } else {
             searchQuery = encodeURIComponent(`${locationName}, Northeast India`);
@@ -78,20 +124,20 @@ const geocodeLocation = async (locationName, stateName = null) => {
         console.error(`Error geocoding ${locationName}:`, error);
     }
 
-    // Fallback: Use state center with randomization if state is known
-    if (stateName && STATE_CENTERS[stateName]) {
-        const stateCenter = STATE_CENTERS[stateName];
+    // Fallback: Use state center from predefined list with small randomization if state is known
+    if (stateName && PREDEFINED_COORDINATES[stateName]) {
+        const stateCenter = PREDEFINED_COORDINATES[stateName];
         const fallback = [
-            stateCenter[0] + (Math.random() - 0.5) * 0.3,
-            stateCenter[1] + (Math.random() - 0.5) * 0.3
+            stateCenter[0] + (Math.random() - 0.5) * 0.1, // Reduced randomization for better accuracy near state center
+            stateCenter[1] + (Math.random() - 0.5) * 0.1
         ];
         console.log(`Using state fallback for ${locationName} in ${stateName}:`, fallback);
         coordinateCache[cacheKey] = fallback;
         return fallback;
     }
 
-    // Final fallback to Northeast India center with randomization
-    const fallback = [26.1445 + (Math.random() - 0.5) * 2, 91.7362 + (Math.random() - 0.5) * 2];
+    // Final fallback to Northeast India center
+    const fallback = [26.1445 + (Math.random() - 0.5) * 0.5, 91.7362 + (Math.random() - 0.5) * 0.5];
     console.log(`Using general fallback for ${locationName}:`, fallback);
     coordinateCache[cacheKey] = fallback;
     return fallback;

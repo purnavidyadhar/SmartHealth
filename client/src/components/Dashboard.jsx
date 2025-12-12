@@ -205,11 +205,10 @@ const Dashboard = () => {
         body: JSON.stringify({
           location: quickReportForm.location,
           severity: quickReportForm.severity,
-          waterSource: 'River',
           symptoms: ['Fever'],
           count: quickReportForm.cases,
           registeredCases: quickReportForm.registered,
-          state: 'Assam'
+          state: quickReportForm.state || 'Assam'
         })
       });
 
@@ -218,7 +217,7 @@ const Dashboard = () => {
 
       if (res.ok) {
         setShowQuickReport(false);
-        setQuickReportForm({ location: '', cases: 1, registered: 0, severity: 'Low' });
+        setQuickReportForm({ location: '', cases: 1, registered: 0, severity: 'Low', state: 'Assam' });
         fetchStats(); // Refresh data
         alert('Report added successfully!');
       } else if (res.status === 401) {
@@ -786,6 +785,24 @@ const Dashboard = () => {
                         placeholder="e.g., Guwahati"
                         autoFocus
                       />
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">State</label>
+                      <select
+                        className="form-input"
+                        value={quickReportForm.state || 'Assam'}
+                        onChange={(e) => setQuickReportForm({ ...quickReportForm, state: e.target.value })}
+                      >
+                        <option value="Assam">Assam</option>
+                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tripura">Tripura</option>
+                      </select>
                     </div>
 
                     <div className="form-group">
