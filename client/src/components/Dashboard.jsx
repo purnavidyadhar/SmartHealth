@@ -338,7 +338,7 @@ const Dashboard = () => {
                   opacity: 0.85
                 }}
               >
-                <source src="/videos/ne-nature.mp4#t=3" type="video/mp4" />
+                <source src={`${import.meta.env.BASE_URL}videos/ne-nature.mp4#t=3`} type="video/mp4" />
                 {/* Fallback to image if video doesn't load */}
               </video>
 
@@ -419,7 +419,13 @@ const Dashboard = () => {
 
           {/* Stats Grid - Enhanced */}
           <div className="dashboard-grid" style={{ marginBottom: '2.5rem' }}>
-            <motion.div variants={itemVariants} whileHover={cardHover} className="glass-panel card stat-card">
+            <motion.div
+              variants={itemVariants}
+              whileHover={cardHover}
+              className="glass-panel card stat-card"
+              onClick={() => navigate('/village-reports')}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="stat-icon" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981' }}>
                 <Activity size={32} />
               </div>
@@ -706,26 +712,40 @@ const Dashboard = () => {
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Recent Updates</h3>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '1rem', background: 'var(--bg-glass)', borderRadius: '0.75rem', border: '1px solid var(--border-color)' }}>
-                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Droplets size={20} color="#10b981" />
+                {stats.recentUpdates && stats.recentUpdates.length > 0 ? (
+                  stats.recentUpdates.map((update, index) => {
+                    const isAlert = update.type === 'alert';
+                    const timeAgo = (dateString) => {
+                      const seconds = Math.floor((new Date() - new Date(dateString)) / 1000);
+                      let interval = seconds / 3600;
+                      if (interval > 1) return Math.floor(interval) + "h ago";
+                      interval = seconds / 60;
+                      if (interval > 1) return Math.floor(interval) + "m ago";
+                      return Math.floor(seconds) + "s ago";
+                    };
+
+                    return (
+                      <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '1rem', background: 'var(--bg-glass)', borderRadius: '0.75rem', border: '1px solid var(--border-color)' }}>
+                        <div style={{
+                          width: 44, height: 44, borderRadius: '50%',
+                          background: isAlert ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                        }}>
+                          {isAlert ? <AlertTriangle size={20} color="#ef4444" /> : <Droplets size={20} color="#10b981" />}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.25rem' }}>{update.title}</div>
+                          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{update.desc}</div>
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', flexShrink: 0 }}>{timeAgo(update.time)}</div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+                    <p>No recent reports or alerts.</p>
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.25rem' }}>Water Quality Improved</div>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>5 villages received new filtration systems</div>
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', flexShrink: 0 }}>2h ago</div>
-                </div>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '1rem', background: 'var(--bg-glass)', borderRadius: '0.75rem', border: '1px solid var(--border-color)' }}>
-                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(14, 165, 233, 0.05))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <AlertTriangle size={20} color="#0ea5e9" />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.25rem' }}>Monsoon Alert Issued</div>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Precautions for low-lying areas</div>
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', flexShrink: 0 }}>5h ago</div>
-                </div>
+                )}
               </div>
             </motion.div>
           </div>

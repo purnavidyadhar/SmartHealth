@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
@@ -14,6 +14,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 
 import Users from './components/Users';
+import VillageReports from './components/VillageReports';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <main className="main-content">
               <Routes>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/village-reports" element={<VillageReports />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route

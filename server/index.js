@@ -250,6 +250,28 @@ app.post('/api/reports', authenticate, authorize(ROLES.HEALTH_WORKER, ROLES.ADMI
     }
 });
 
+// Delete all reports for a location (Protected: National Admin only)
+app.delete('/api/reports/location/:location', authenticate, authorize(ROLES.NATIONAL_ADMIN), async (req, res) => {
+    try {
+        const { location } = req.params;
+
+        // Delete all reports with this location
+        const result = await Report.deleteMany({
+            location: { $regex: new RegExp(`^${location}$`, 'i') }
+        });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ error: 'No reports found for this location' });
+        }
+
+        console.log(`Deleted ${result.deletedCount} reports for location: ${location} by admin ${req.user.userId}`);
+        res.json({ message: `Successfully removed village and ${result.deletedCount} associated reports` });
+    } catch (error) {
+        console.error('Delete location error:', error);
+        res.status(500).json({ error: 'Server error deleting location' });
+    }
+});
+
 // Get public map data (anonymized)
 app.get('/api/map-data', async (req, res) => {
     try {
@@ -358,10 +380,32 @@ app.get('/api/stats', async (req, res) => {
             };
         });
 
+        // Fetch recent activity
+        const recentReports = await Report.find().sort({ timestamp: -1 }).limit(2);
+        const recentAlerts = await Alert.find().sort({ createdAt: -1 }).limit(2);
+
+        const updates = [
+            ...recentReports.map(r => ({
+                type: 'report',
+                title: `New Report in ${r.location}`,
+                desc: `${r.severity} severity case reported with ${r.symptoms?.[0] || 'symptoms'}`,
+                time: r.timestamp,
+                severity: r.severity
+            })),
+            ...recentAlerts.map(a => ({
+                type: 'alert',
+                title: `${a.level} Alert: ${a.location}`,
+                desc: a.message,
+                time: a.createdAt,
+                severity: a.level
+            }))
+        ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 2);
+
         res.json({
             totalReports,
             highSeverity,
-            locations
+            locations,
+            recentUpdates: updates
         });
     } catch (error) {
         console.error('Get stats error:', error);

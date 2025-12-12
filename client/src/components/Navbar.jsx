@@ -80,7 +80,11 @@ const Navbar = () => {
                                 {({ isActive }) => (
                                     <>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: isActive ? 1 : 0.6, transition: 'opacity 0.2s' }}>
-                                            <span style={{ fontWeight: isActive ? 600 : 500, color: 'var(--text-main)', fontSize: '0.9rem' }}>{link.label}</span>
+                                            <span style={{
+                                                fontWeight: isActive ? 600 : 500,
+                                                color: 'var(--text-main)',
+                                                fontSize: '0.9rem'
+                                            }}>{link.label}</span>
                                         </div>
                                         {isActive && (
                                             <motion.div
