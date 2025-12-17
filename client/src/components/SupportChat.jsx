@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
 const SupportWidget = () => {
-    const { token, user } = useAuth();
+    const { token, user, logout } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('submit'); // 'submit', 'history'
     const [message, setMessage] = useState('');
@@ -56,6 +56,12 @@ const SupportWidget = () => {
             const res = await fetch('http://localhost:5000/api/support', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+
+            if (res.status === 401) {
+                logout();
+                return;
+            }
+
             if (res.ok) {
                 const data = await res.json();
                 setTickets(Array.isArray(data) ? data : []);
