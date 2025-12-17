@@ -5,6 +5,7 @@ import heroImage from '../assets/hero2.jpg';
 
 const Resources = () => {
     const [openFaq, setOpenFaq] = useState(null);
+    const [showVideo, setShowVideo] = useState(false);
 
     const toggleFaq = (index) => {
         setOpenFaq(openFaq === index ? null : index);
@@ -17,11 +18,20 @@ const Resources = () => {
     ];
 
     const guides = [
-        { title: "Water Purification Guide", type: "PDF", size: "2.4 MB", color: "#3b82f6" },
-        { title: "Standard Sanitation Protocols", type: "PDF", size: "1.1 MB", color: "#10b981" },
-        { title: "Emergency Contact Directory", type: "XLS", size: "0.5 MB", color: "#f59e0b" },
-        { title: "Malaria Prevention Steps", type: "JPG", size: "3.2 MB", color: "#ef4444" }
+        { title: "Water Purification Guide", type: "TXT", size: "2 KB", color: "#3b82f6", link: "/SmartHealth/downloads/water_guide.txt" },
+        { title: "Standard Sanitation Protocols", type: "TXT", size: "2 KB", color: "#10b981", link: "/SmartHealth/downloads/sanitation_protocols.txt" },
+        { title: "Emergency Contact Directory", type: "TXT", size: "1 KB", color: "#f59e0b", link: "/SmartHealth/downloads/emergency_contacts.txt" },
+        { title: "Malaria Prevention Steps", type: "TXT", size: "2 KB", color: "#ef4444", link: "/SmartHealth/downloads/malaria_prevention.txt" }
     ];
+
+    const handleDownload = (link) => {
+        const a = document.createElement('a');
+        a.href = link;
+        a.download = link.split('/').pop();
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
 
     return (
         <div className="container" style={{ maxWidth: '1600px', padding: '0 2rem' }}>
@@ -152,6 +162,7 @@ const Resources = () => {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 style={{ padding: '1.5rem', background: 'var(--bg-card)', borderRadius: '1.5rem', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', cursor: 'pointer' }}
+                                onClick={() => handleDownload(guide.link)}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                                     <div style={{ padding: '0.8rem', background: `rgba(${parseInt(guide.color.slice(1, 3), 16)}, ${parseInt(guide.color.slice(3, 5), 16)}, ${parseInt(guide.color.slice(5, 7), 16)}, 0.1)`, borderRadius: '0.8rem', color: guide.color }}>
@@ -162,7 +173,7 @@ const Resources = () => {
                                         <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{guide.type} • {guide.size}</div>
                                     </div>
                                 </div>
-                                <button style={{ padding: '0.6rem', background: 'var(--bg-main)', borderRadius: '50%', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                                <button onClick={(e) => { e.stopPropagation(); handleDownload(guide.link); }} style={{ padding: '0.6rem', background: 'var(--bg-main)', borderRadius: '50%', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                                     <Download size={18} />
                                 </button>
                             </motion.div>
@@ -181,11 +192,15 @@ const Resources = () => {
                             Watch our detailed 5-minute guide on proper water sanitation techniques for rural households.
                         </p>
                     </div>
-                    <button style={{ width: '100%', padding: '1rem', borderRadius: '1rem', background: 'var(--text-main)', color: 'var(--bg-main)', border: 'none', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '2rem' }}>
-                        Watch Now <ExternalLink size={18} />
-                    </button>
+                    <a href="https://youtu.be/pTBfPf0Z3FE?si=0XF9O4owsnp6-vXU" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', width: '100%' }}>
+                        <button style={{ width: '100%', padding: '1rem', borderRadius: '1rem', background: 'var(--text-main)', color: 'var(--bg-main)', border: 'none', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '2rem' }}>
+                            Watch Now <ExternalLink size={18} />
+                        </button>
+                    </a>
                 </div>
             </div>
+
+
 
             {/* --- FAQ SECTION --- */}
             <div style={{ maxWidth: '800px', margin: '0 auto 6rem auto' }}>
