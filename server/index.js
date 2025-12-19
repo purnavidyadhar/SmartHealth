@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 const cors = require('cors');
-const connectDB = require('./config/db');
+const { connectDB } = require('./config/db');
 const {
     ROLES,
     generateToken,

@@ -84,4 +84,6 @@ alertSchema.index({ location: 1, isActive: 1 });
 alertSchema.index({ level: 1 });
 alertSchema.index({ createdAt: -1 });
 
-module.exports = mongoose.model('Alert', alertSchema);
+const createHybridModel = require('../utils/createHybridModel');
+
+module.exports = createHybridModel('Alert', alertSchema);

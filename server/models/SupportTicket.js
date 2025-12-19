@@ -39,4 +39,6 @@ const supportTicketSchema = new mongoose.Schema({
     }]
 });
 
-module.exports = mongoose.model('SupportTicket', supportTicketSchema);
+const createHybridModel = require('../utils/createHybridModel');
+
+module.exports = createHybridModel('SupportTicket', supportTicketSchema);

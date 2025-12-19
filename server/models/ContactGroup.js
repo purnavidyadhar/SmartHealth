@@ -29,4 +29,6 @@ const contactGroupSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('ContactGroup', contactGroupSchema);
+const createHybridModel = require('../utils/createHybridModel');
+
+module.exports = createHybridModel('ContactGroup', contactGroupSchema);

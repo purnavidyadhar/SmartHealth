@@ -1,0 +1,153 @@
+[
+    {
+        "_id": "report_001",
+        "userId": "community_user_001",
+        "location": "Guwahati",
+        "state": "Assam",
+        "severity": "High",
+        "waterSource": "River",
+        "symptoms": [
+            "Fever",
+            "Vomiting"
+        ],
+        "registeredCases": 12,
+        "timestamp": "2024-03-10T10:00:00.000Z",
+        "status": "resolved",
+        "createdAt": "2024-03-10T10:00:00.000Z"
+    },
+    {
+        "_id": "report_002",
+        "userId": "community_user_001",
+        "location": "Shillong",
+        "state": "Meghalaya",
+        "severity": "Medium",
+        "waterSource": "Tap",
+        "symptoms": [
+            "Diarrhea"
+        ],
+        "registeredCases": 5,
+        "timestamp": "2024-03-11T14:30:00.000Z",
+        "status": "pending",
+        "createdAt": "2024-03-11T14:30:00.000Z"
+    },
+    {
+        "_id": "report_003",
+        "userId": "community_user_001",
+        "location": "Kohima",
+        "state": "Nagaland",
+        "severity": "Low",
+        "waterSource": "Well",
+        "symptoms": [
+            "Skin Rash"
+        ],
+        "registeredCases": 3,
+        "timestamp": "2024-03-12T09:15:00.000Z",
+        "status": "pending",
+        "createdAt": "2024-03-12T09:15:00.000Z"
+    },
+    {
+        "_id": "report_004",
+        "userId": "community_user_001",
+        "location": "Tezpur",
+        "state": "Assam",
+        "severity": "High",
+        "waterSource": "Pond",
+        "symptoms": [
+            "Fever"
+        ],
+        "registeredCases": 8,
+        "timestamp": "2024-03-13T11:20:00.000Z",
+        "status": "investigating",
+        "createdAt": "2024-03-13T11:20:00.000Z"
+    },
+    {
+        "_id": "report_005",
+        "userId": "community_user_001",
+        "location": "Imphal",
+        "state": "Manipur",
+        "severity": "Medium",
+        "waterSource": "River",
+        "symptoms": [
+            "Typhoid"
+        ],
+        "registeredCases": 6,
+        "timestamp": "2024-03-14T16:45:00.000Z",
+        "status": "pending",
+        "createdAt": "2024-03-14T16:45:00.000Z"
+    },
+    {
+        "_id": "report_006",
+        "userId": "community_user_001",
+        "location": "Aizawl",
+        "state": "Mizoram",
+        "severity": "Low",
+        "waterSource": "Rainwater",
+        "symptoms": [
+            "Stomach Ache"
+        ],
+        "registeredCases": 2,
+        "timestamp": "2024-03-15T08:30:00.000Z",
+        "status": "resolved",
+        "createdAt": "2024-03-15T08:30:00.000Z"
+    },
+    {
+        "_id": "report_007",
+        "userId": "community_user_001",
+        "location": "Gangtok",
+        "state": "Sikkim",
+        "severity": "Low",
+        "waterSource": "Spring",
+        "symptoms": [
+            "Mild Fever"
+        ],
+        "registeredCases": 1,
+        "timestamp": "2024-03-15T10:00:00.000Z",
+        "status": "pending",
+        "createdAt": "2024-03-15T10:00:00.000Z"
+    },
+    {
+        "_id": "report_008",
+        "userId": "community_user_001",
+        "location": "Agartala",
+        "state": "Tripura",
+        "severity": "Medium",
+        "waterSource": "Tap",
+        "symptoms": [
+            "Dysentery"
+        ],
+        "registeredCases": 4,
+        "timestamp": "2024-03-16T12:00:00.000Z",
+        "status": "investigating",
+        "createdAt": "2024-03-16T12:00:00.000Z"
+    },
+    {
+        "_id": "report_009",
+        "userId": "community_user_001",
+        "location": "Itanagar",
+        "state": "Arunachal Pradesh",
+        "severity": "High",
+        "waterSource": "Stream",
+        "symptoms": [
+            "Malaria"
+        ],
+        "registeredCases": 7,
+        "timestamp": "2024-03-16T14:00:00.000Z",
+        "status": "pending",
+        "createdAt": "2024-03-16T14:00:00.000Z"
+    },
+    {
+        "_id": "report_010",
+        "userId": "community_user_001",
+        "location": "Silchar",
+        "state": "Assam",
+        "severity": "Medium",
+        "waterSource": "Pond",
+        "symptoms": [
+            "Fever"
+        ],
+        "registeredCases": 5,
+        "timestamp": "2024-03-17T09:30:00.000Z",
+        "status": "resolved",
+        "createdAt": "2024-03-17T09:30:00.000Z"
+    }
+]

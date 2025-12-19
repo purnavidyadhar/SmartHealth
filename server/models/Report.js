@@ -65,4 +65,6 @@ reportSchema.index({ timestamp: -1 });
 reportSchema.index({ userId: 1 });
 reportSchema.index({ state: 1, location: 1 });
 
-module.exports = mongoose.model('Report', reportSchema);
+const createHybridModel = require('../utils/createHybridModel');
+
+module.exports = createHybridModel('Report', reportSchema);

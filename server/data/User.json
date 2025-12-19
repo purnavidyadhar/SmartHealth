@@ -1,0 +1,20 @@
+[
+    {
+        "_id": "system_admin_001",
+        "name": "System Admin",
+        "email": "admin@smarthealth.ne",
+        "password": "hashed_password_placeholder",
+        "role": "national_admin",
+        "location": "Guwahati",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+        "_id": "community_user_001",
+        "name": "Rohan Das",
+        "email": "rohan@example.com",
+        "password": "hashed_password_placeholder",
+        "role": "community",
+        "location": "Guwahati",
+        "createdAt": "2024-01-02T00:00:00.000Z"
+    }
+]
