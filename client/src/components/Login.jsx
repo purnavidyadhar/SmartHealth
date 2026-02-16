@@ -108,7 +108,7 @@ const Login = () => {
                         Welcome Back
                     </h1>
                     <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>
-                        Login to Smart Health NE
+                        Login to Arogya NE
                     </p>
                 </div>
 

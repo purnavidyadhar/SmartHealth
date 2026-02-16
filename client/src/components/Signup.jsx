@@ -132,7 +132,7 @@ const Signup = () => {
                         Join Our Community
                     </h1>
                     <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>
-                        Create your Smart Health NE account
+                        Create your Arogya NE account
                     </p>
                 </div>
 

@@ -457,7 +457,7 @@ const Dashboard = () => {
                   textShadow: '0 4px 12px rgba(0,0,0,0.1)'
                 }}
               >
-                Smart Health Dashboard
+                Arogya Health Dashboard
               </motion.h1>
               <motion.p
                 initial={{ y: 20, opacity: 0 }}

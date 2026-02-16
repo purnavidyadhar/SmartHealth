@@ -32,7 +32,7 @@ const Navbar = () => {
                         </div>
                         <div>
                             <h1 style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.5px', lineHeight: 1, margin: 0, color: 'var(--text-main)' }}>
-                                SmartHealth<span style={{ color: 'var(--primary)' }}>NE</span>
+                                Arogya<span style={{ color: 'var(--primary)' }}>NE</span>
                             </h1>
                             <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 500, letterSpacing: '0.5px' }}>
                                 RAPID RESPONSE SYSTEM

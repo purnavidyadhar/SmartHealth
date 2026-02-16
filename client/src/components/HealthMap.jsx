@@ -107,7 +107,7 @@ const geocodeLocation = async (locationName, stateName = null) => {
             {
                 signal: controller.signal,
                 headers: {
-                    'User-Agent': 'SmartHealthNE/1.0'
+                    'User-Agent': 'ArogyaNE/1.0'
                 }
             }
         );

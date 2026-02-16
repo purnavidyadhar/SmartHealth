@@ -13,7 +13,7 @@ const Footer = () => {
                             <div style={{ background: 'var(--primary-gradient)', padding: '6px', borderRadius: '6px', display: 'flex' }}>
                                 <Activity size={18} color="white" />
                             </div>
-                            <span style={{ fontSize: '1.25rem' }}>SmartHealth NE</span>
+                            <span style={{ fontSize: '1.25rem' }}>Arogya NE</span>
                         </div>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                             Empowering communities with real-time health monitoring and early warning systems.
@@ -36,7 +36,7 @@ const Footer = () => {
                         <h4>Contact</h4>
                         <ul style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                             <li style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                <Mail size={16} /> support@smarthealthne.org
+                                <Mail size={16} /> support@arogyane.org
                             </li>
                             <li style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                                 <Phone size={16} /> +91 123 456 7890
@@ -48,7 +48,7 @@ const Footer = () => {
                     </div>
                 </div>
                 <div style={{ borderTop: '1px solid var(--border-color)', marginTop: '2rem', paddingTop: '1.5rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                    © 2025 Smart Community Health System. All rights reserved.
+                    © 2026 Arogya Community Health System. All rights reserved.
                 </div>
             </div>
         </footer>
