@@ -1016,7 +1016,11 @@ app.post("/api/support/:id/messages", authenticate, async (req, res) => {
 
 // ============ START SERVER ============
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-});
+// Conditional listen for local dev vs serverless export
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+    });
+}
+
+module.exports = app;
