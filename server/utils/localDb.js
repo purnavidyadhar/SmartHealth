@@ -1,11 +1,20 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
-const DATA_DIR = path.join(__dirname, '..', 'data');
+// Use /tmp for Vercel/Serverless environments (Linux), otherwise local data folder
+const isVercel = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+const DATA_DIR = isVercel ? path.join(os.tmpdir(), 'smart-health-data') : path.join(__dirname, '..', 'data');
+
+console.log(`[LocalDB] Using data directory: ${DATA_DIR}`);
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+    try {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+    } catch (e) {
+        console.error('[LocalDB] Failed to create data directory:', e);
+    }
 }
 
 class LocalDatabase {
